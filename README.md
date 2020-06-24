@@ -1,2 +1,2 @@
 # ReinforcementLearning
-Algorithms and practice of RL
+Algorithms and practices of RL
