@@ -2,31 +2,27 @@
 
 import os
 import numpy as np
-
-import parl
-from parl import layers
-from paddle import fluid
 from parl.utils import logger
 from parl.utils import action_mapping  # 将神经网络输出映射到对应的 实际动作取值范围 内
 from parl.utils import ReplayMemory  # 经验回放
-
-from rlschool import make_env  # 使用 RLSchool 创建飞行器环境
 from model import BipedalWalkerModel
 from agent import BipedalWalkerAgent
 from parl.algorithms import DDPG
 import gym
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 
 GAMMA = 0.99  # reward 的衰减因子，一般取 0.9 到 0.999 不等
 TAU = 0.001  # target_model 跟 model 同步参数 的 软更新参数
-ACTOR_LR = 0.001 # Actor网络更新的 learning rate
-CRITIC_LR = 0.005  # Critic网络更新的 learning rate
+ACTOR_LR = 0.0002  # Actor网络更新的 learning rate
+CRITIC_LR = 0.001  # Critic网络更新的 learning rate
 MEMORY_SIZE = 1e6  # replay memory的大小，越大越占用内存
 MEMORY_WARMUP_SIZE = 1e4  # replay_memory 里需要预存一些经验数据，再从里面sample一个batch的经验让agent去learn
 REWARD_SCALE = 0.01  # reward 的缩放因子
 BATCH_SIZE = 256  # 每次给agent learn的数据数量，从replay memory随机里sample一批数据出来
 TRAIN_TOTAL_STEPS = 10e6  # 总训练步数
 TEST_EVERY_STEPS = 1e4  # 每个N步评估一下算法效果，每次评估5个episode求平均reward
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 
 def run_episode(env, agent, rpm):
     obs = env.reset()
@@ -43,6 +39,8 @@ def run_episode(env, agent, rpm):
                                 env.action_space.high[0])
 
         next_obs, reward, done, info = env.step(action)
+        if reward == -100:
+            reward = -5
         rpm.append(obs, action, REWARD_SCALE * reward, next_obs, done)
 
         if rpm.size() > MEMORY_WARMUP_SIZE:
@@ -99,9 +97,9 @@ def main():
     model = BipedalWalkerModel(act_dim)
     algorithm = DDPG(model, gamma=GAMMA, tau=TAU, actor_lr=ACTOR_LR, critic_lr=CRITIC_LR)
     agent = BipedalWalkerAgent(algorithm, obs_dim, act_dim)
-    if os.path.exists('model_dir/steps_38_reward_-28.327070444075748.ckpt'):
-        agent.restore('model_dir/steps_38_reward_-28.327070444075748.ckpt')
-        print("restore succeed")
+    # if os.path.exists('model_dir/steps_38_reward_-28.327070444075748.ckpt'):
+    #     agent.restore('model_dir/steps_38_reward_-28.327070444075748.ckpt')
+    #     print("restore succeed")
     # parl库也为DDPG算法内置了ReplayMemory，可直接从 parl.utils 引入使用
     rpm = ReplayMemory(int(MEMORY_SIZE), obs_dim, act_dim)
 
@@ -123,9 +121,9 @@ def main():
             if evaluate_reward>=best_reward:
                 best_reward = evaluate_reward
                 # 保存模型
-                ckpt = 'model_dir/steps_{}_reward_{}.ckpt'.format(total_steps,best_reward)
+                ckpt = 'model_dir_2/steps_{}_reward_{}.ckpt'.format(total_steps,best_reward)
                 agent.save(ckpt)
-    ckpt = 'model_dir5/steps_{}_reward_{}.ckpt'.format(total_steps, best_reward)
+    ckpt = 'model_dir_2/steps_{}_reward_{}.ckpt'.format(total_steps, best_reward)
     agent.save(ckpt)
 if __name__ == '__main__':
     main()

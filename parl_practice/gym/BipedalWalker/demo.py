@@ -6,9 +6,9 @@ print("obs_space:",obs_space)
 print("act_space:",act_space)
 print("high:",env.observation_space.high)
 print("low:",env.observation_space.low)
-for i_episode in range(20):
+for i_episode in range(1):
     obs = env.reset()
-    for t in range(100):
+    for t in range(20):
         env.render()
         print("obs:",obs)
         action = env.action_space.sample()
