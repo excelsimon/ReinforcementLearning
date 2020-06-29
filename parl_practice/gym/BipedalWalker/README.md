@@ -12,7 +12,7 @@
 # Result
 
 ## DDPG_v1
-- The BipedalWalker can move forward to the far end with single leg, aha, BipedalWalker-V3.mp4 show this and it tak2s 27 seconds.
+- The BipedalWalker can move forward to the far end with single leg, aha, BipedalWalker-V3.mp4 show this and it takes 27 seconds.
 - After about 100w steps, the mean reward of 5 test episode reaches 51.498. 
 
 ## DDPG_V2
