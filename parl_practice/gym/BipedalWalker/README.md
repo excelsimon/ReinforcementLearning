@@ -19,7 +19,7 @@
 
 ## DDPG_V2
 - The BipedalWalker can RUN quickly to the far end, BipedalWalker-V3_version2.mp4 show this and it shorten the time to 12 seconds.
-- After about 70w episode, the mean reward of 5 test episode reaches 323.10
+- After about 70w steps, the mean reward of 5 test episode reaches 323.10
 - The improvement is potentially because of one more fc layer is used and the size of each layer is twice as big as DDPG_v1.
 Besides, once the bipedal walker failed, the reward is -100. Compared to -0.x reward, the -100 reward may do harm to the training process.
 I change -100 to -5 when training and it proves to be beneficial.
